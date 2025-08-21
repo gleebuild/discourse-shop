@@ -1,0 +1,33 @@
+
+<% if request.path.start_with?('/shop/admin') %>
+  <div class="container">
+    <h2>管理</h2>
+    <ul>
+      <li><a href="/shop-api/admin/products" data-auto-route="false" rel="nofollow">产品列表(JSON)</a></li>
+      <li><a href="/shop-api/admin/coupons" data-auto-route="false" rel="nofollow">优惠券列表(JSON)</a></li>
+      <li><a href="/shop-api/admin/orders" data-auto-route="false" rel="nofollow">订单列表(JSON)</a></li>
+    </ul>
+    <p>服务器渲染的占位页面。前端资产可用时将自动切换为 SPA。</p>
+  </div>
+<% else %>
+  <div class="container">
+    <h2>商城</h2>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+      <% begin %>
+        <% products = DiscourseShop::Product.published.order(created_at: :desc).limit(24) %>
+        <% products.each do |p| %>
+          <div style="border:1px solid #e6e6e6;border-radius:8px;padding:8px;">
+            <% if p.image_url.present? %>
+              <img src="<%= p.image_url %>" alt="<%= p.title %>" style="width:100%;height:160px;object-fit:cover;border-radius:6px;" />
+            <% end %>
+            <div style="margin-top:6px;font-weight:600;"><%= p.title %></div>
+            <div style="color:#666;"><%= p.price_cents %> <%= p.currency %></div>
+          </div>
+        <% end %>
+      <% rescue => e %>
+        <p>加载商品失败：<%= e.class %> - <%= e.message %></p>
+      <% end %>
+    </div>
+    <p style="margin-top:1rem;color:#888;">服务器渲染的占位页面。前端资产可用时将自动切换为 SPA。</p>
+  </div>
+<% end %>
